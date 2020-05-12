@@ -49,20 +49,6 @@ runPath = outputPath + runID
 pathlib.Path(runPath).mkdir(parents=True, exist_ok=True)
 print('Output: ' + runPath)
 
- # (optional steps)
-if True:
-    # Keep a copy of this training script and calling arguments
-    with open(__file__, 'r') as training_script: training_script_content = training_script.read()
-    training_script_content = '#' + str(sys.argv) + '\n' + training_script_content
-    with open(runPath+'/'+__file__, 'w') as training_script: training_script.write(training_script_content)
-
-    # Generate model plot
-    plot_model(model, to_file=runPath+'/model_plot.svg', show_shapes=True, show_layer_names=True)
-
-    # Save model summary to file
-    from contextlib import redirect_stdout
-    with open(runPath+'/model_summary.txt', 'w') as f:
-        with redirect_stdout(f): model.summary()
 
 # Multi-gpu setup:
 basemodel = model
