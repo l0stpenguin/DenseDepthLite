@@ -5,6 +5,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 from loss import depth_loss_function
 from utils import predict, save_images, load_test_data
 from model import create_model
+from model_efficientnet import  create_model_efficientnet
 from data import get_nyu_train_test_data, get_unreal_train_test_data
 from callbacks import get_nyu_callbacks
 
@@ -25,7 +26,7 @@ parser.add_argument('--maxdepth', type=float, default=1000.0, help='Maximum of i
 parser.add_argument('--name', type=str, default='densedepth_nyu', help='A name to attach to the training session')
 parser.add_argument('--checkpoint', type=str, default='', help='Start training from an existing model.')
 parser.add_argument('--full', dest='full', action='store_true', help='Full training with metrics, checkpoints, and image samples.')
-
+parser.add_argument('--efficientnet', dest='efficientnet', action='store_true', help='Train a efficientnet B0 model.')
 args = parser.parse_args()
 
 # Inform about multi-gpu training
@@ -36,7 +37,10 @@ else:
     print('Will use ' + str(args.gpus) + ' GPUs.')
 
 # Create the model
-model = create_model( existing=args.checkpoint )
+if args.efficientnet:
+    model = create_model_efficientnet(existing=args.checkpoint)
+else:
+    model = create_model( existing=args.checkpoint )
 
 # Data loaders
 if args.data == 'nyu': train_generator, test_generator = get_nyu_train_test_data( args.bs )
