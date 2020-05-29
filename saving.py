@@ -23,7 +23,7 @@ from ..utils.io_utils import ask_to_proceed_with_overwrite
 from ..utils.io_utils import save_to_binary_h5py
 from ..utils.io_utils import load_from_binary_h5py
 from ..utils import conv_utils
-
+from tensorflow.python.framework.tensor_shape import Dimension
 try:
     import h5py
     HDF5_OBJECT_HEADER_LIMIT = 64512
@@ -89,12 +89,9 @@ def _serialize_model(model, h5dict, include_optimizer=True):
             return obj.__name__
 
         # If it is a tf.Dimension
-        try:
-            obj = int(obj)
-            return obj
-        except TypeError:
-            pass
-
+        if type(obj) == Dimension:
+            return int(obj.value or 0)
+        print(type(obj))
         raise TypeError('Not JSON Serializable: %s' % (obj,))
 
     from .. import __version__ as keras_version
