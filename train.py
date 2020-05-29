@@ -77,4 +77,4 @@ if args.data == 'unreal': callbacks = get_nyu_callbacks(model, basemodel, train_
 model.fit_generator(train_generator, callbacks=callbacks, validation_data=test_generator, epochs=args.epochs, shuffle=True)
 
 # Save the final trained model:
-basemodel.save(runPath + '/model.h5')
+basemodel.save(runPath + '/model.h5', include_optimizer=False)
