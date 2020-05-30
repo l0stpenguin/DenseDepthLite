@@ -24,7 +24,7 @@ def get_nyu_data(batch_size, nyu_data_zipfile='nyu_data.zip'):
     shape_depth = (batch_size, 240, 320, 1)
 
     # Helpful for testing...
-    if True:
+    if False:
         nyu2_train = nyu2_train[:10000]
         nyu2_test = nyu2_test[:10000]
 
