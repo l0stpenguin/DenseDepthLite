@@ -6,6 +6,8 @@ from loss import depth_loss_function
 from utils import predict, save_images, load_test_data
 from model import create_model
 from model_efficientnet import  create_model_efficientnet
+from model_mobilenetv3 import  create_model_mobilenetv3
+
 from data import get_nyu_train_test_data, get_unreal_train_test_data
 from callbacks import get_nyu_callbacks
 
@@ -27,6 +29,7 @@ parser.add_argument('--name', type=str, default='densedepth_nyu', help='A name t
 parser.add_argument('--checkpoint', type=str, default='', help='Start training from an existing model.')
 parser.add_argument('--full', dest='full', action='store_true', help='Full training with metrics, checkpoints, and image samples.')
 parser.add_argument('--efficientnet', dest='efficientnet', action='store_true', help='Train a efficientnet B0 model.')
+parser.add_argument('--mobilenetv3', dest='mobilenetv3', action='store_true', help='Train a mobilenetv3 model.')
 args = parser.parse_args()
 
 # Inform about multi-gpu training
@@ -39,6 +42,8 @@ else:
 # Create the model
 if args.efficientnet:
     model = create_model_efficientnet(existing=args.checkpoint)
+elif args.mobilenetv3:
+    model = create_model_mobilenetv3(existing=args.checkpoint)
 else:
     model = create_model( existing=args.checkpoint )
 
