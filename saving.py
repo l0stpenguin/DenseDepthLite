@@ -24,6 +24,7 @@ from ..utils.io_utils import ask_to_proceed_with_overwrite
 from ..utils.io_utils import save_to_binary_h5py
 from ..utils.io_utils import load_from_binary_h5py
 from ..utils import conv_utils
+from tensorflow.python.framework.tensor_shape import Dimension
 
 try:
     import h5py
