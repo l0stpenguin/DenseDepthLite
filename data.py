@@ -25,8 +25,8 @@ def get_nyu_data(batch_size, nyu_data_zipfile='nyu_data.zip'):
 
     # Helpful for testing...
     if True:
-        nyu2_train = nyu2_train[:100]
-        nyu2_test = nyu2_test[:100]
+        nyu2_train = nyu2_train[:10000]
+        nyu2_test = nyu2_test[:10000]
 
     return data, nyu2_train, nyu2_test, shape_rgb, shape_depth
 
