@@ -5,7 +5,7 @@ from keras.models import Model, load_model
 from keras.layers import Input, InputLayer, Conv2D, Activation, LeakyReLU, Concatenate
 from layers import BilinearUpSampling2D
 from loss import depth_loss_function
-from kerascv.model_provider import get_model as kecv_get_model
+# from kerascv.model_provider import get_model as kecv_get_model
 import keras
 from keras_applications.mobilenet_v3 import MobileNetV3Large
 def create_model_mobilenetv3(existing='', is_halffeatures=True):
