@@ -16,6 +16,7 @@ def create_model_mobilenetv3(existing='', is_halffeatures=True):
         # base_model = kecv_get_model("mobilenetv3_large_w1", pretrained=True, in_size=(480,640,3))
         base_model = MobileNetV3Large(
             weights='imagenet', 
+            minimalistic=True,
             include_top=False,
             input_shape=(480,640, 3),
             backend=keras.backend,
