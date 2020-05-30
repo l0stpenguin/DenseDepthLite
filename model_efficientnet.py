@@ -1,18 +1,30 @@
 import sys
-
-from keras import applications
+# from tensorflow.keras.applications import EfficientNetB0
+# from keras import applications
 from keras.models import Model, load_model
 from keras.layers import Input, InputLayer, Conv2D, Activation, LeakyReLU, Concatenate
 from layers import BilinearUpSampling2D
 from loss import depth_loss_function
-import efficientnet.keras as efn 
+# import efficientnet.keras as efn 
+import keras
+from keras_applications.efficientnet import EfficientNetB0
+# from keras_applications.efficientnet import EfficientNetB0
 
 def create_model_efficientnet(existing='', is_halffeatures=True):
     if len(existing) == 0:
         print('Loading base model (efficientNetB0)..')
-
+        
         # Encoder Layers
-        base_model = efn.EfficientNetB0(weights='imagenet', include_top=False,input_shape=(None, None, 3))
+        # base_model = efn.EfficientNetB0(weights='imagenet', include_top=False,input_shape=(None, None, 3))
+        base_model = EfficientNetB0(
+            weights='imagenet', 
+            include_top=False,
+            input_shape=(None, None, 3),
+            backend=keras.backend,
+            layers=keras.layers,
+            models=keras.models,
+            utils=keras.utils
+        )
 
         print('Base model loaded.')
 
