@@ -1,8 +1,8 @@
 import sys
 
-from keras import applications
+from keras import applications, backend
 from keras.models import Model, load_model
-from keras.layers import Input, InputLayer, Conv2D, Activation, LeakyReLU, Concatenate
+from keras.layers import Input, InputLayer, Conv2D, Activation, LeakyReLU, Concatenate, Lambda, Multiply
 from layers import BilinearUpSampling2D
 from loss import depth_loss_function
 # from kerascv.model_provider import get_model as kecv_get_model
@@ -64,8 +64,15 @@ def create_model_mobilenetv3(existing='', is_halffeatures=True):
         # Extract depths (final layer)
         conv3 = Conv2D(filters=1, kernel_size=3, strides=1, padding='same', name='conv3')(decoder)
 
+        minDepth = 10
+        maxDepth = 1000
+        # max_depth_scalar = Input(shape = (maxDepth,maxDepth,maxDepth))
+        max_depth_scalar = 1000
+        disp = Lambda(lambda x: max_depth_scalar / x)(conv3)
+        clipped = Lambda(lambda x: backend.clip(x, min_value=minDepth, max_value=maxDepth))(disp)
+        final = Lambda(lambda x: x / max_depth_scalar)(clipped)
         # Create the model
-        model = Model(inputs=base_model.input, outputs=conv3)
+        model = Model(inputs=base_model.input, outputs=final)
     else:
         # Load model from file
         if not existing.endswith('.h5'):
