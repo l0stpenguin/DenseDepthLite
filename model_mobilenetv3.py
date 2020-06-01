@@ -64,15 +64,15 @@ def create_model_mobilenetv3(existing='', is_halffeatures=True):
         # Extract depths (final layer)
         conv3 = Conv2D(filters=1, kernel_size=3, strides=1, padding='same', name='conv3')(decoder)
 
-        minDepth = 10
-        maxDepth = 1000
-        # max_depth_scalar = Input(shape = (maxDepth,maxDepth,maxDepth))
-        max_depth_scalar = 1000
-        disp = Lambda(lambda x: max_depth_scalar / x)(conv3)
-        clipped = Lambda(lambda x: backend.clip(x, min_value=minDepth, max_value=maxDepth))(disp)
-        final = Lambda(lambda x: x / max_depth_scalar)(clipped)
+        # minDepth = 10
+        # maxDepth = 1000
+        # max_depth_scalar = 1000
+        # disp = Lambda(lambda x: max_depth_scalar / x)(conv3)
+        # clipped = Lambda(lambda x: backend.clip(x, min_value=minDepth, max_value=maxDepth))(disp)
+        # final = Lambda(lambda x: x / max_depth_scalar)(clipped)
+
         # Create the model
-        model = Model(inputs=base_model.input, outputs=final)
+        model = Model(inputs=base_model.input, outputs=conv3)
     else:
         # Load model from file
         if not existing.endswith('.h5'):
