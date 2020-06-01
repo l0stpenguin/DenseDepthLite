@@ -56,9 +56,9 @@ def create_model_mobilenetv3(existing='', is_halffeatures=True):
                          name='conv2')(base_model.output)
 
         decoder = upproject(decoder, int(decode_filters / 2), 'up1', concat_with='activation_14') #30, 40, 256
-        decoder = upproject(decoder, int(decode_filters / 4), 'up2', concat_with='activation_8') # 60, 80, 128
-        decoder = upproject(decoder, int(decode_filters / 8), 'up3', concat_with='activation_4') #120,  160, 64
-        decoder = upproject(decoder, int(decode_filters / 16), 'up4', concat_with='activation_1')  #240, 320, 64
+        decoder = upproject(decoder, int(decode_filters / 4), 'up2', concat_with='activation_8') #60, 80, 128
+        decoder = upproject(decoder, int(decode_filters / 8), 'up3', concat_with='activation_4') #120, 160, 64
+        decoder = upproject(decoder, int(decode_filters / 16), 'up4', concat_with='activation_3') #240, 320, 64
         if False: decoder = upproject(decoder, int(decode_filters / 32), 'up5', concat_with='input_1')
 
         # Extract depths (final layer)
