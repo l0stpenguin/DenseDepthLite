@@ -8,7 +8,7 @@ from model import create_model
 from model_efficientnet import  create_model_efficientnet
 from model_mobilenetv3 import  create_model_mobilenetv3
 from model_nasnetmobile import create_model_nasnetmobile
-
+from model_efficientnet_lite import create_model_efficientnet_lite
 from data import get_nyu_train_test_data, get_unreal_train_test_data
 from callbacks import get_nyu_callbacks
 
@@ -32,6 +32,7 @@ parser.add_argument('--full', dest='full', action='store_true', help='Full train
 parser.add_argument('--efficientnet', dest='efficientnet', action='store_true', help='Train a efficientnet B0 model.')
 parser.add_argument('--mobilenetv3', dest='mobilenetv3', action='store_true', help='Train a mobilenetv3 model.')
 parser.add_argument('--nasnetmobile', dest='nasnetmobile', action='store_true', help='Train a nasnetmobile model.')
+parser.add_argument('--efficientnetlite', dest='efficientnetlite', action='store_true', help='Train a efficientnetlite B0 model.')
 
 args = parser.parse_args()
 
@@ -49,6 +50,8 @@ elif args.mobilenetv3:
     model = create_model_mobilenetv3(existing=args.checkpoint)
 elif args.nasnetmobile:
     model = create_model_nasnetmobile(existing=args.checkpoint)
+elif args.efficientnetlite:
+    model = create_model_efficientnet_lite(existing=args.checkpoint)
 else:
     model = create_model( existing=args.checkpoint )
 
