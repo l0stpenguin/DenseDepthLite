@@ -7,6 +7,7 @@ from utils import predict, save_images, load_test_data
 from model import create_model
 from model_efficientnet import  create_model_efficientnet
 from model_mobilenetv3 import  create_model_mobilenetv3
+from model_nasnetmobile import create_model_nasnetmobile
 
 from data import get_nyu_train_test_data, get_unreal_train_test_data
 from callbacks import get_nyu_callbacks
@@ -30,6 +31,8 @@ parser.add_argument('--checkpoint', type=str, default='', help='Start training f
 parser.add_argument('--full', dest='full', action='store_true', help='Full training with metrics, checkpoints, and image samples.')
 parser.add_argument('--efficientnet', dest='efficientnet', action='store_true', help='Train a efficientnet B0 model.')
 parser.add_argument('--mobilenetv3', dest='mobilenetv3', action='store_true', help='Train a mobilenetv3 model.')
+parser.add_argument('--nasnetmobile', dest='nasnetmobile', action='store_true', help='Train a nasnetmobile model.')
+
 args = parser.parse_args()
 
 # Inform about multi-gpu training
@@ -44,6 +47,8 @@ if args.efficientnet:
     model = create_model_efficientnet(existing=args.checkpoint)
 elif args.mobilenetv3:
     model = create_model_mobilenetv3(existing=args.checkpoint)
+elif args.nasnetmobile:
+    model = create_model_nasnetmobile(existing=args.checkpoint)
 else:
     model = create_model( existing=args.checkpoint )
 
