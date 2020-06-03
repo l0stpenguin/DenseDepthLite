@@ -73,6 +73,9 @@ class NYU_BasicAugmentRGBSequence(Sequence):
             batch_x[i] = nyu_resize(x, 480)
             batch_y[i] = nyu_resize(y, 240)
 
+            #normalise input for efficientlite models
+            batch_x[i] = (batch_x[i]/127.5) - 1.0
+
             if is_apply_policy: batch_x[i], batch_y[i] = self.policy(batch_x[i], batch_y[i])
 
             # DEBUG:
