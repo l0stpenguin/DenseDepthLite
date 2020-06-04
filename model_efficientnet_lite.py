@@ -2,7 +2,7 @@ import sys
 # from tensorflow.keras.applications import EfficientNetB0
 from keras import applications
 from keras.models import Model, load_model
-from keras.layers import Input, InputLayer, Conv2D, Activation, LeakyReLU, Concatenate
+from keras.layers import Input, InputLayer, Conv2D, Activation, LeakyReLU, Concatenate, UpSampling2D
 from layers import BilinearUpSampling2D
 from loss import depth_loss_function
 # import efficientnet.keras as efn 
@@ -33,7 +33,7 @@ def create_model_efficientnet_lite(existing='', is_halffeatures=True):
 
         # Define upsampling layer
         def upproject(tensor, filters, name, concat_with):
-            up_i = BilinearUpSampling2D((2, 2), name=name + '_upsampling2d')(tensor)
+            up_i = UpSampling2D(size=(2, 2), name=name + '_upsampling2d')(tensor)
             up_i = Concatenate(name=name + '_concat')(
                 [up_i, base_model.get_layer(concat_with).output])  # Skip connection
             up_i = Conv2D(filters=filters, kernel_size=3, strides=1, padding='same', name=name + '_convA')(up_i)
