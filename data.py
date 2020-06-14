@@ -5,6 +5,7 @@ from PIL import Image
 from zipfile import ZipFile
 from keras.utils import Sequence
 from augment import BasicPolicy
+from skimage.transform import resize
 
 def extract_zip(input_zip):
     input_zip=ZipFile(input_zip)
@@ -86,15 +87,17 @@ class RedWeb_BasicAugmentRGBSequence(Sequence):
 
             sample = self.dataset[index]
 
-            #normalise input for efficientlite models
-            x = (np.asarray(Image.open( BytesIO(self.data[sample[0]]) ))/127.5) - 1.0
-            x = nyu_resize(x, 480).reshape(480,640,3)
-            x = np.clip(x, 0, 1)
-            y = np.asarray(Image.open( BytesIO(self.data[sample[1]]) ))/255*self.maxDepth
-            y = nyu_resize(y, 240).reshape(240,320,1)
-            y = np.clip(y,0,self.maxDepth)
-            y = DepthNorm(y, maxDepth=self.maxDepth)
             
+            rgb_sample = np.asarray(Image.open( BytesIO(self.data[sample[0]])))
+            rgb_sample = resize(rgb_sample, (self.shape_rgb[1], self.shape_rgb[2]), preserve_range=True, mode='reflect', anti_aliasing=True )
+            
+            depth_sample = np.asarray(Image.open( BytesIO(self.data[sample[1]])))
+            depth_sample = resize(depth_sample, (self.shape_depth[1], self.shape_depth[2]), preserve_range=True, mode='reflect', anti_aliasing=True )
+            #normalise input for efficientlite models
+            x = np.clip((rgb_sample/127.5)-1.0, 0, 1)
+            y = np.clip(depth_sample, 10, self.maxDepth)
+            y = y[..., np.newaxis]
+            y = DepthNorm(y, maxDepth=self.maxDepth)
 
             batch_x[i] = x
             batch_y[i] = y
