@@ -59,7 +59,7 @@ def get_redweb_train_test_data(batch_size):
 
 
 class RedWeb_BasicAugmentRGBSequence(Sequence):
-     def __init__(self, data, dataset, batch_size, shape_rgb, shape_depth, is_flip=False, is_addnoise=False, is_erase=False):
+    def __init__(self, data, dataset, batch_size, shape_rgb, shape_depth, is_flip=False, is_addnoise=False, is_erase=False):
         self.data = data
         self.dataset = dataset
         self.policy = BasicPolicy( color_change_ratio=0.50, mirror_ratio=0.50, flip_ratio=0.0 if not is_flip else 0.2, 
