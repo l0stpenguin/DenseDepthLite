@@ -31,7 +31,14 @@ def get_nyu_data(batch_size, nyu_data_zipfile='nyu_data.zip'):
 
     return data, nyu2_train, nyu2_test, shape_rgb, shape_depth
 
+def get_diml_data(batch_size, data_zipfile='diml_data.zip'):
+    data = extract_zip(data_zipfile)
+    nyu2_train = list((row.split(',') for row in (data['data/diml_outdoor_train.csv']).decode("utf-8").split('\n') if len(row) > 0))
+    nyu2_test = list((row.split(',') for row in (data['data/diml_outdoor_test.csv']).decode("utf-8").split('\n') if len(row) > 0))
+    shape_rgb = (batch_size, 480, 640, 3)
+    shape_depth = (batch_size, 240, 320, 1)
 
+    return data, nyu2_train, nyu2_test, shape_rgb, shape_depth
 def get_redweb_data(batch_size, data_zipfile='ReDWeb_V1.zip'):
     data = extract_zip(data_zipfile)
     nyu2_train = list((row.split(',') for row in (data['data/redweb_train.csv']).decode("utf-8").split('\n') if len(row) > 0))
@@ -57,7 +64,64 @@ def get_redweb_train_test_data(batch_size):
 
     return train_generator, test_generator
 
+def get_diml_train_test_data(batch_size):
+    data, diml_train, diml_test, shape_rgb, shape_depth = get_diml_data(batch_size)
 
+    train_generator = DIML_BasicAugmentRGBSequence(data, diml_train, batch_size=batch_size, shape_rgb=shape_rgb, shape_depth=shape_depth)
+    test_generator = DIML_BasicAugmentRGBSequence(data, diml_test, batch_size=batch_size, shape_rgb=shape_rgb, shape_depth=shape_depth)
+
+    return train_generator, test_generator
+
+class DIML_BasicAugmentRGBSequence(Sequence):
+    def __init__(self, data, dataset, batch_size, shape_rgb, shape_depth, is_flip=False, is_addnoise=False, is_erase=False):
+        self.data = data
+        self.dataset = dataset
+        self.policy = BasicPolicy( color_change_ratio=0.50, mirror_ratio=0.50, flip_ratio=0.0 if not is_flip else 0.2, 
+                                    add_noise_peak=0 if not is_addnoise else 20, erase_ratio=-1.0 if not is_erase else 0.5)
+        self.batch_size = batch_size
+        self.shape_rgb = shape_rgb
+        self.shape_depth = shape_depth
+        self.maxDepth = 1000.0
+
+        from sklearn.utils import shuffle
+        self.dataset = shuffle(self.dataset, random_state=0)
+
+        self.N = len(self.dataset)
+
+    def __len__(self):
+        return int(np.ceil(self.N / float(self.batch_size)))
+
+    def __getitem__(self, idx, is_apply_policy=True):
+        batch_x, batch_y = np.zeros( self.shape_rgb ), np.zeros( self.shape_depth )
+
+        # Augmentation of RGB images
+        for i in range(batch_x.shape[0]):
+            index = min((idx * self.batch_size) + i, self.N-1)
+
+            sample = self.dataset[index]
+
+            
+            rgb_sample = np.asarray(Image.open( BytesIO(self.data[sample[0]])))
+            rgb_sample = resize(rgb_sample, (self.shape_rgb[1], self.shape_rgb[2]), preserve_range=True, mode='reflect', anti_aliasing=True )
+            
+            depth_sample = np.asarray(Image.open( BytesIO(self.data[sample[1]])))
+            depth_sample = resize(depth_sample, (self.shape_depth[1], self.shape_depth[2]), preserve_range=True, mode='reflect', anti_aliasing=True )
+            #normalise input for efficientlite models
+            x = np.clip((rgb_sample/127.5)-1.0, 0, 1)
+            y = np.clip(depth_sample, 10, self.maxDepth)
+            y = y[..., np.newaxis]
+            y = DepthNorm(y, maxDepth=self.maxDepth)
+
+            batch_x[i] = x
+            batch_y[i] = y
+
+            if is_apply_policy: batch_x[i], batch_y[i] = self.policy(batch_x[i], batch_y[i])
+
+            # DEBUG:
+            #self.policy.debug_img(batch_x[i], np.clip(DepthNorm(batch_y[i])/maxDepth,0,1), idx, i)
+        #exit()
+
+        return batch_x, batch_y
 
 class RedWeb_BasicAugmentRGBSequence(Sequence):
     def __init__(self, data, dataset, batch_size, shape_rgb, shape_depth, is_flip=False, is_addnoise=False, is_erase=False):
