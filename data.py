@@ -98,7 +98,7 @@ class Megadepth_BasicAugmentRGBSequence(Sequence):
         self.batch_size = batch_size
         self.shape_rgb = shape_rgb
         self.shape_depth = shape_depth
-        self.maxDepth = 1000.0
+        self.maxDepth = 10000.0
 
         from sklearn.utils import shuffle
         self.dataset = shuffle(self.dataset, random_state=0)
