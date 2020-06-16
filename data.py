@@ -48,7 +48,7 @@ def get_redweb_data(batch_size, data_zipfile='ReDWeb_V1.zip'):
 
     return data, nyu2_train, nyu2_test, shape_rgb, shape_depth
 
-def get_megadepth_data(batch_size, data_zipfile='megadepth_5k.zip'):
+def get_megadepth_data(batch_size, data_zipfile='megadepth_data.zip'):
     data = extract_zip(data_zipfile)
     megadepth_train = list((row.split(',') for row in (data['data/megadepth_train.csv']).decode("utf-8").split('\n') if len(row) > 0))
     megadepth_test = list((row.split(',') for row in (data['data/megadepth_test.csv']).decode("utf-8").split('\n') if len(row) > 0))
